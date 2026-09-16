@@ -1,0 +1,25 @@
+{
+  "name": "end-of-question",
+  "private": true,
+  "packageManager": "pnpm@10.30.3",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @eoq/shared build && pnpm --parallel --filter @eoq/api --filter @eoq/web dev",
+    "build": "pnpm --filter @eoq/shared build && pnpm --filter @eoq/api build && pnpm --filter @eoq/web build && node scripts/check-public-bundle.mjs",
+    "typecheck": "pnpm --filter @eoq/shared build && pnpm -r typecheck",
+    "test": "pnpm --filter @eoq/api test",
+    "test:integration": "pnpm --filter @eoq/api test:integration",
+    "db:generate": "pnpm --filter @eoq/api db:generate",
+    "db:migrate": "pnpm --filter @eoq/api db:migrate",
+    "db:seed": "pnpm --filter @eoq/api db:seed",
+    "db:up": "docker compose -f docker/compose.yml up -d",
+    "test:ui": "playwright test",
+    "eval:live": "pnpm --filter @eoq/api exec tsx scripts/eval-live.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "typescript": "^5.9.3"
+  }
+}

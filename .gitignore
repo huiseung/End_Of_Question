@@ -1,0 +1,47 @@
+# Dependencies and generated output
+node_modules/
+.pnpm-store/
+dist/
+.next/
+out/
+next-env.d.ts
+
+# Local environment and credentials (commit sanitized examples only)
+.env
+.env.*
+!.env.example
+!.env.production.example
+.envrc
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Build caches, logs, and test artifacts
+*.tsbuildinfo
+coverage/
+*.log
+.cache/
+test-results/
+playwright-report/
+blob-report/
+
+# Local database files and backups (keep Prisma SQL migrations)
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+*.dump
+*.sql.gz
+backups/
+
+# Machine-specific editor, agent, and OS files
+.idea/
+.vscode/
+.codex/
+.agents/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
