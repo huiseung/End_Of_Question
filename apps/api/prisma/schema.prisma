@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+enum GameStatus {
+  PLAYING
+  FINAL_ANSWER
+  CLEARED
+  FAILED
+  GAVE_UP
+}
+enum Verdict {
+  TRUE
+  FALSE
+  UNKNOWN
+  MIXED
+  INVALID
+}
+model Case {
+  id String @id @default(uuid()) @db.Uuid
+  title String
+  question String
+  story Json @db.JsonB
+  maxQuestionCount Int @default(30)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  sessions GameSession[]
+  progress CaseProgress[]
+}
+model GameSession {
+  id String @id @default(uuid()) @db.Uuid
+  anonymousId String @db.Uuid
+  caseId String @db.Uuid
+  case Case @relation(fields: [caseId], references: [id])
+  questionCount Int @default(0)
+  maxQuestionCount Int
+  status GameStatus @default(PLAYING)
+  finalSubmissionUsed Boolean @default(false)
+  startedAt DateTime @default(now())
+  completedAt DateTime?
+  questions Question[]
+  submissions Submission[]
+  @@index([anonymousId, caseId, startedAt])
+}
+model Question {
+  id String @id @default(uuid()) @db.Uuid
+  sessionId String @db.Uuid
+  session GameSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  requestId String @db.Uuid
+  question String
+  verdict Verdict
+  createdAt DateTime @default(now())
+  @@unique([sessionId, requestId])
+  @@index([sessionId, createdAt])
+}
+model Submission {
+  id String @id @default(uuid()) @db.Uuid
+  sessionId String @db.Uuid
+  session GameSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  requestId String @db.Uuid
+  answer String
+  matchedCount Int
+  missingCount Int
+  success Boolean
+  isFinal Boolean
+  createdAt DateTime @default(now())
+  @@unique([sessionId, requestId])
+  @@index([sessionId, createdAt])
+}
+model CaseProgress {
+  anonymousId String @db.Uuid
+  caseId String @db.Uuid
+  case Case @relation(fields: [caseId], references: [id])
+  cleared Boolean @default(false)
+  failed Boolean @default(false)
+  revealed Boolean @default(false)
+  bestQuestionCount Int?
+  attemptCount Int @default(0)
+  @@id([anonymousId, caseId])
+}
